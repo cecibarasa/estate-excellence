@@ -1,0 +1,12 @@
+{% load static %}
+<nav>
+    <ul>
+        <img src="{% static 'images/estate-excellence-logo.png' %}" alt="Estate Excellence Logo" class="logo">
+        <li class="nav-item brand"><a class="nav-link" href="{% url 'index' %}">Estate Excellence</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'about-us' %}">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'properties' %}">Properties</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contact-us' %}">Contact Us</a></li>
+        <li class="nav-item property"><a class="nav-link" href="#">List Your Property</a></li>
+    </ul>
+</nav>
