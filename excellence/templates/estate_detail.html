@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1>{{ estate.name }}</h1>
+  <p><strong>Location:</strong> {{ estate.location_name }}</p>
+  <a href="{% url 'properties' %}">Back to listings</a>
+</div>
+{% endblock %}
