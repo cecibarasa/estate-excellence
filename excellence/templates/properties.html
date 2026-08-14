@@ -3,12 +3,12 @@
 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container">
     <div class="properties-hero">
         <h3> curated portfolios</h3>
         <h1>Discover Architectural <br> Masterpieces</h1>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <p>Discover an unparalleled selection of architectural masterpieces, <br>from Brutalist cliffside retreats to neo-classical urban estates.</p>
             </div>
             <div class="col-md-2">
@@ -21,6 +21,126 @@
             </div>
         </div>
     </div>
+    <div class="properties-grid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="filter">
+                    <div class="row">
+                        <h4> Refine Search</h4>
+                        <h5> Price range (USD)
+                        <form>
+                            <div class="row price">
+                                <div class="col-md-2 min">
+                                    <input type="number" placeholder="Min">
+                                </div>
+                                <div class="col-md-2 max">
+                                    <input type="number" placeholder="Max">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h3>Accomodations</h3>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="bedrooms" name="bedrooms" value="bedrooms">
+                                    <label for="bedrooms">Bedrooms</label><br>
+                                </div> 
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="bathrooms" name="bathrooms" value="bathrooms">
+                                    <label for="bathrooms">Bathrooms</label><br>
+                                </div>
+                            </div>
+                            {% comment %} <div class="row">
+                                <h3>Property Type</h3>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="villa" name="villa" value="villa">
+                                    <label for="villa">Villa</label><br>
+                                </div> 
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="apartment" name="apartment" value="apartment">
+                                    <label for="apartment">Apartment</label><br>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="townhouse" name="townhouse" value="townhouse">
+                                    <label for="townhouse">Townhouse</label><br>
+                                </div>
+                            </div> {% endcomment %}
+                            <div class="row">
+                                <h3>Distiguished amenities</h3>
+                                <input type="checkbox" id="pool" name="pool" value="pool">
+                                <label for="pool">Pool</label><br>
+                                <input type="checkbox" id="spa" name="spa" value="spa">
+                                <label for="spa">Spa</label><br>
+                                <input type="checkbox" id="gym" name="gym" value="gym">
+                                <label for="gym">Gym</label><br>
+                                <input type="checkbox" id="garden" name="garden" value="garden">
+                                <label for="garden">Garden</label><br>
+                            </div>
+                            <a href="#" class="btn" type="button">Apply Filters</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img src="{% static 'images/property1.jpg' %}" alt="Property 1">
+                <h3>Luxury Villa<span class ="price">$1,200,000</span></h3>
+                <h1>The Obsidian Pavilion</h1>
+                <hr>
+                <div class="flex gap-5">
+                    <span class="icon"><i class="fas fa-bed"></i> 4 </span>
+                    <span class="icon"><i class="fas fa-shower"></i> 3 </span>
+                    <span class="icon"><i class="fas fa-ruler-combined"></i> 3500</span>
+                    <span class="icon" type="button" href="#"><i  class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+             <div class="col-md-3">
+                    <img src="{% static 'images/property2.jpg' %}" alt="Property 2">
+                    <h3>Modern Apartment<span class ="price">$850,000</span></h3>
+                    <h1> Madison Heritage Manor</h1>
+                    <hr>
+                    <div class="flex gap-5">
+                        <span class="icon"><i class="fas fa-bed"></i> 2 </span>
+                        <span class="icon"><i class="fas fa-shower"></i> 2 </span>
+                        <span class="icon"><i class="fas fa-ruler-combined"></i> 1200</span>
+                        <span class="icon" type="button" href="#"><i  class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="location">
+        <div class="row">
+            <div class="col-md-6">
+                <h1>Explore Destinations.</h1>
+                <p>Our properties are strategically located in the world's most <br> coveted zip codes. From the quiet majesty of the Swiss Alps to <br> the vibrant pulse of Tokyo's Minato City.</p>
+                <div class="row">
+                    <div class="col-md-2">
+                        <span>24<br></span>
+                        <p>Global Region.</p>
+                    </div>
+                    <div class="col-md-2">
+                        <span>1500+<br></span>
+                        <p>Trusted Partners.</p>
+                    </div>
+                </div>
+                <a href="#">View Interctive Map <i class="fas fa-arrow-right-long"></i></a>
+            </div>
+            <div class="col-md-4">
+                <img src="{% static "/images/map.png" %}">
+            </div>
+        </div>
+    </div>
+    <div class="transend">
+        <h1>Ready to transform the <br> ordinary?</h1>
+        <p>Our private advisors are standing by to guide you through the most exclusive, off-market <br> opportunities</p>
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn"><a href="#">schedule consultation</a></button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn1"><a href="#">inquire privacy policy</a></button>
+            </div>
+        </div>
+    </div>
+    {% include "footer.html" %}
 </div>
 
 {% endblock %}
