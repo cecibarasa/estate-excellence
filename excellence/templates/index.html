@@ -1,117 +1,169 @@
 {% extends 'base.html' %}
-
 {% load static %}
+{% load humanize %}
+
 {% block title %}Home - Estate Excellence{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="hero">
-        <div class="hero-content">
-            <h1>Discover Architectural <br> Masterpieces</h1>
-            <form>
-                <select>
-                    <option value="">Locations</option>
-                    <option value="location1">Location 1</option>
-                    <option value="location2">Location 2</option>
-                    <option value="location3">Location 3</option>
-                </select>
-                <select>
-                    <option value="">Property Types</option>
-                    <option value="type1">Type 1</option>
-                    <option value="type2">Type 2</option>
-                    <option value="type3">Type 3</option>
-                </select>
-                <select label="Price Ranges">
-                    <option value="">Price Ranges</option>
-                    <option value="range1">Range 1</option>
-                    <option value="range2">Range 2</option>
-                    <option value="range3">Range 3</option>
-                </select>
-                <button type="submit"><i class="fas fa-search"></i> &nbsp;&nbsp;&nbsp;Find Excellence</button>
+<div class="home-page">
+    <header class="home-hero">
+        <div class="hero-overlay"></div>
+        <div class="home-hero-content">
+            <h1>Discover Architectural<br>Masterpieces</h1>
+            <form method="GET" action="" class="home-search-form">
+                <div class="search-field">
+                    <label>Location</label>
+                    <select name="location">
+                        <option value="">Locations</option>
+                        {% for location_choice in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" %}
+                        {% endfor %}
+                        {% for estate in estates %}
+                            <option value="{{ estate.location_name }}" {% if selected_location == estate.location_name %}selected{% endif %}>{{ estate.location_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label>Property Type</label>
+                    <select name="property_type">
+                        <option value="">Property Type</option>
+                        <option value="villa" {% if selected_property_type == 'villa' %}selected{% endif %}>Villa</option>
+                        <option value="penthouse" {% if selected_property_type == 'penthouse' %}selected{% endif %}>Penthouse</option>
+                        <option value="estate" {% if selected_property_type == 'estate' %}selected{% endif %}>Estate</option>
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label>Price Range</label>
+                    <select name="price_range">
+                        <option value="">Price Range</option>
+                        <option value="1" {% if selected_price_range == '1' %}selected{% endif %}>$1M - $5M</option>
+                        <option value="2" {% if selected_price_range == '2' %}selected{% endif %}>$5M - $10M</option>
+                        <option value="3" {% if selected_price_range == '3' %}selected{% endif %}>$10M - $20M</option>
+                    </select>
+                </div>
+                <button type="submit"><i class="fas fa-search"></i> Find Excellence</button>
             </form>
         </div>
-    </div>
-    <div class="featured-properties">
-        <div class="row">
-            <div class="column">
-                <h3>Curated Selection</h3>
-                <h1>Features Architectural <br> Collections</h1>
+    </header>
+
+    <section class="home-curated">
+        <div class="section-header">
+            <div class="header-copy">
+                <p class="eyebrow">Curated Selection</p>
+                <h2>Featured Architectural<br>Collections</h2>
             </div>
-            <div class="column">
-                <a href="#" class="btn">View Entire Portfolio &nbsp; &nbsp;<i class="fas fa-arrow-right"></i></a>
-            </div>
+            <a href="{% url 'properties' %}" class="portfolio-link">View Entire Portfolio <i class="fas fa-arrow-right"></i></a>
         </div>
-        <div class="property-grid">
-            <div class="property-card">
-                <img src="{% static 'images/property1.jpg' %}" alt="Property 1">
-                <h3>Luxury Villa</h3>
-                <h1>The Obsidian Pavilion</h1>
-                <hr>
-                <div class="flex gap-4">
-                    <span class="icon"><i class="fas fa-bed"></i> 4 </span>
-                    <span class="icon"><i class="fas fa-shower"></i> 3 </span>
-                    <span class="icon"><i class="fas fa-ruler-combined"></i> 3500</span>
-                    <span class ="price">$1,200,000</span>
+
+        <div class="collection-grid">
+            {% for estate in estates|slice:':3' %}
+                <article class="collection-card">
+                    <div class="card-image-wrap">
+                        <img src="{% if estate.image %}{{ estate.image.url }}{% else %}https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=900&q=80{% endif %}" alt="{{ estate.name }}">
+                        <span class="card-tag">Exclusive</span>
+                    </div>
+                    <div class="card-meta">
+                        <div class="card-location-row">
+                            <span class="meta-label">{{ estate.location_name|default:'Malibu, California' }}</span>
+                            <span class="card-price">Ksh &nbsp;{{ estate.price|intcomma }}</span>
+                        </div>
+                        <h3>{{ estate.name|default:'The Obsidian Pavilion' }}</h3>
+                        <div class="card-details">
+                            <span><i class="fas fa-bed"></i> {{ estate.bedrooms|default:'6' }}</span>
+                            <span><i class="fas fa-bath"></i> {{ estate.bathrooms|default:'5' }}</span>
+                            <span><i class="fas fa-ruler-combined"></i> {{ estate.total_built_area|default:'4,200' }}</span>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <article class="collection-card">
+                    <div class="card-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=900&q=80" alt="Property">
+                        <span class="card-tag">Exclusive</span>
+                    </div>
+                    <div class="card-meta">
+                        <div class="card-location-row">
+                            <span class="meta-label">Malibu, California</span>
+                            <span class="card-price">$1,500,000</span>
+                        </div>
+                        <h3>The Obsidian Pavilion</h3>
+                        <div class="card-details">
+                            <span><i class="fas fa-bed"></i> 6</span>
+                            <span><i class="fas fa-bath"></i> 5</span>
+                            <span><i class="fas fa-ruler-combined"></i> 4,200</span>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-expertise">
+        <div class="expertise-header">
+            <p class="eyebrow">Our Ethos</p>
+            <h2>Unrivaled<br>Expertise in<br>Luxury Living</h2>
+        </div>
+        <div class="expertise-grid">
+            <div class="expertise-visual">
+                <img src="{% static 'images/hand-shake.jpg' %}" alt="Client meeting" class="expertise-main-image">
+                <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=900&q=80" alt="Property consultation" class="expertise-side-image">
+            </div>
+            <div class="expertise-copy">
+                <p>We don't just list properties; we curate exceptional homes, guiding clients through a refined, high-touch journey rooted in luxury, trust, and local expertise.</p>
+                <div class="expertise-columns">
+                    <div>
+                        <h3>Discreet Advisory</h3>
+                        <p>Our committed team delivers a sophisticated, highly personalized service that matches each client with exceptional opportunities.</p>
+                    </div>
+                    <div>
+                        <h3>Global Network</h3>
+                        <p>We connect buyers and sellers across the world through a powerful network of trusted partners, investors, and property specialists.</p>
+                    </div>
+                    <div>
+                        <h3>Curated Selection</h3>
+                        <p>From waterfront estates to city penthouses, we present choices that reflect the highest standards of quality and design.</p>
+                    </div>
+                    <div>
+                        <h3>Tailored Search</h3>
+                        <p>We build bespoke strategies to find properties that align with your vision, lifestyle, and long-term investment objectives.</p>
+                    </div>
                 </div>
             </div>
-            <div class="property-card">
-                <img src="{% static 'images/property2.jpg' %}" alt="Property 2">
-                <h3>Modern Apartment</h3>
-                <h1> Madison Heritage Manor</h1>
-                <hr>
-                <div class="flex gap-4">
-                    <span class="icon"><i class="fas fa-bed"></i> 2 </span>
-                    <span class="icon"><i class="fas fa-shower"></i> 2 </span>
-                    <span class="icon"><i class="fas fa-ruler-combined"></i> 1200</span>
-                    <span class ="price">$850,000</span>
-                </div>
+        </div>
+
+        <div class="metrics-row">
+            <div class="metric-item">
+                <strong>7B+</strong>
+                <span>Millon in sales</span>
             </div>
-            <div class="property-card">
-                <img src="{% static 'images/property3.jpg' %}" alt="Property 3">
-                <h3>Cozy Cottage</h3>
-                <h1> Villa Azzura</h1>
-                <hr>
-                <div class="flex gap-4">
-                    <span class="icon"><i class="fas fa-bed"></i> 3 </span>
-                    <span class="icon"><i class="fas fa-shower"></i> 2 </span>
-                    <span class="icon"><i class="fas fa-ruler-combined"></i> 1500</span>
-                    <span class ="price">$450,000</span>
-                </div>
+            <div class="metric-item">
+                <strong>29</strong>
+                <span>Global offices</span>
+            </div>
+            <div class="metric-item">
+                <strong>524+</strong>
+                <span>Exclusive listings</span>
+            </div>
+            <div class="metric-item">
+                <strong>15</strong>
+                <span>Years heritage</span>
             </div>
         </div>
-    </div>
-    <div class="about-section">
-        <div class="row">
-            <div class="col-md-6">
-                <img src="{% static 'images/hand-shake.jpg' %}" alt="About Us">
-            </div>
-            <div class="col-md-6">
-                <h3>Our Ethos</h3>
-                <h1>Unrivaled<br> Expertise in <br> Luxury Living</h1>
-                <p>We are dedicated to providing the finest architectural properties, <br> ensuring that every detail meets the highest standards of excellence.</p>
-            </div>
-        </div>
-    </div>
-    <div class="numerical-highlights">
-        <div class="row">
-            <div class="col-md-3">
-                <h1>500+</h1>
-                <p>Properties Sold</p>
-            </div>
-            <div class="col-md-3">
-                <h1>300+</h1>
-                <p>Happy Clients</p>
-            </div>
-            <div class="col-md-3">
-                <h1>50+</h1>
-                <p>Awards Won</p>
-            </div>
-            <div class="col-md-3">
-                <h1>20+</h1>
-                <p>Years of Experience</p>
+    </section>
+
+    <section class="home-listing-cta">
+        <div class="listing-copy">
+            <h2>List Your Property<br>with the World's<br>Best</h2>
+            <p>Experience the difference that global market intelligence, white-glove service, and strategic positioning can make for your asset.</p>
+            <div class="cta-actions">
+                <a href="#" class="cta-btn dark">Request an Appraisal</a>
+                <a href="#" class="cta-btn light">Our Marketing Strategy</a>
             </div>
         </div>
-    </div>
-    {% include "footer.html" %}
+        <div class="listing-art">
+            <div class="listing-logo-box">Estate Excellence</div>
+        </div>
+    </section>
+
+    {% comment %} {% include "footer.html" %} {% endcomment %}
 </div>
 {% endblock %}

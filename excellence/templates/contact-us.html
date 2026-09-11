@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="contact-page">
+        <div class="contact-hero">
+            <h5>Confidential Consultation</h5>
+            <h1>Private Inquiries</h1>
+            <p>Discretion is the cornerstone of our practice. Connect with our senior advisory <br> team to discuss your portfolio, market opportunities, or bespoke acquisitions in <br> strict confidence.</p>
+        </div>
+        <div class="contact-section">
+            <div class="row">
+                <div class="col-md-7">
+                    <form class="row g-3">
+                        <h4>Initiate Contact</h4>
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="number" class="form-label">Phone Number</label>
+                            <input type="number" class="form-control" id="inputAddress" placeholder="+254 712 345 678 ">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="interest" class="form-label">Primary Interest</label>
+                            <input type="text" class="form-control" id="interest" placeholder="Primary Interest">
+                        </div>
+                        <div class="col-12">
+                            <label for="message" class="form-label d-block">Message</label>
+                            <textarea id="message" name="message" class="form-control" rows="5" placeholder="Please provide details regarding your inquiry."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <p>Information submitted is encrypted and transmitted securely.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn">Submit Inquiry &nbsp; <i class="fas fa-arrow-right"></i> </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-5">
+                    <h3><span><i class="fas fa-minus"></i></span>&nbsp;Global Offices</h3>
+                    <div class="contact-address">
+                        <h5>Nairobi Headquaters</h5>
+                        <h6>OTC Office Tower, Westlands</h6>
+                        <p>Nairobi, Kenya</p>
+                        <p><i class="fas fa-phone"></i>+254 07 123 456</p>
+                        <br>
+                        <h5>Karen Office</h5>
+                        <h6>OTC Office Tower, Westlands</h6>
+                        <p>Nairobi, Kenya</p>
+                        <p><i class="fas fa-phone"></i>+254 07 123 456</p>
+                        <br>
+                        <h5>Muthaiga Office</h5>
+                        <h6>OTC Office Tower, Westlands</h6>
+                        <p>Nairobi, Kenya</p>
+                        <p><i class="fas fa-phone"></i>+254 07 123 456</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "footer.html" %}
+{% endblock  %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="about-page">
+    <header class="about-hero">
+        <div class="about-hero-content">
+            <h1>A Legacy of Excellence</h1>
+            <p>Curating the world's most exceptional architectural achievements for the discerning collector since 2008.</p>
+        </div>
+    </header>
+
+    <main class="about-main">
+        <section class="story-section">
+            <div class="story-copy">
+                <p class="eyebrow">Our Story</p>
+                <h2>Masterpieces of<br>Architecture &<br>Design</h2>
+                <p>Estate Excellence was founded on a singular premise: that a home is more than a structure; it is a profound expression of one's legacy. For over a decade, we have navigated the intricate world of ultra-luxury real estate, connecting visionary creators with those who appreciate the extraordinary.</p>
+                <p>Our portfolio is meticulously curated, representing not just high value, but true architectural significance. We approach every transaction with an unwavering commitment to discretion, integrity, and unparalleled market expertise.</p>
+            </div>
+            <div class="story-visual">
+                <img src="{% static 'images/about1.jpg' %}" alt="Luxury interior">
+                <span class="story-badge">15+<span>Years of<br>expertise</span></span>
+            </div>
+        </section>
+
+        <section class="tenets-section">
+            <h3>Our Core Tenets</h3>
+            <p class="tenets-intro">The principles that guide our every interaction and define our standard of service.</p>
+
+            <div class="tenet-grid">
+                <article class="tenet-card light">
+                    <div class="tenet-icon"><i class="fas fa-user-shield"></i></div>
+                    <h4>Absolute Discretion</h4>
+                    <p>We operate with the highest level of confidentiality, protecting the privacy and interests of our distinguished clientele above all else.</p>
+                </article>
+
+                <article class="tenet-card dark">
+                    <div class="tenet-icon"><i class="fa-regular fa-gem"></i></div>
+                    <h4>Uncompromising Integrity</h4>
+                    <p>Transparency and ethical conduct form the bedrock of our firm. We build enduring relationships based on unwavering trust and honesty.</p>
+                </article>
+
+                <article class="tenet-card light">
+                    <div class="tenet-icon"><i class="fa-solid fa-compass-drafting"></i></div>
+                    <h4>Curatorial Expertise</h4>
+                    <p>Possessing a refined eye for design and deep market acumen, we possess the insight to identify and articulate the true value of exceptional properties.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="leadership-section">
+            <p class="eyebrow">Leadership</p>
+            <div class="leadership-row">
+                <div class="leader-portrait">
+                    <img src="{% static 'images/agent.jpg' %}" alt="Elena Sterling">
+                    <div class="leader-name">
+                        <span>Elena Sterling</span>
+                        <small>Founder &amp; CEO</small>
+                    </div>
+                </div>
+
+                <div class="leader-quote">
+                    <blockquote>"True luxury is found in the meticulous attention to detail, the seamless orchestration of the transaction, and the profound respect for the legacy of the property."</blockquote>
+                    <p>Elena Sterling brings over two decades of experience in the ultra-luxury market. Her background in architectural history and finance uniquely positions her to understand both the aesthetic and investment value of the properties Estate Excellence represents.</p>
+                    <a href="#">Read Full Biography</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="perspective-section">
+            <h3>A Global Perspective</h3>
+            <p>Operating in the world's most coveted destinations, providing seamless service across distinct markets.</p>
+
+            <div class="city-grid">
+                <article class="city-card">
+                    <img src="{% static 'images/manhattan.jpg' %}" alt="Manhattan">
+                    <div class="city-copy">
+                        <h4>Manhattan</h4>
+                        <p>The pinnacle of urban sophistication.</p>
+                    </div>
+                </article>
+
+                <article class="city-card city-card-featured">
+                    <img src="{% static 'images/hamptons.jpg' %}" alt="The Hamptons">
+                    <div class="city-copy">
+                        <h4>The Hamptons</h4>
+                        <p>Coastal retreats of unparalleled grace.</p>
+                    </div>
+                </article>
+
+                <article class="city-card">
+                    <img src="{% static 'images/aspen.jpg' %}" alt="Aspen">
+                    <div class="city-copy">
+                        <h4>Aspen</h4>
+                        <p>Alpine sanctuaries for the discerning.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

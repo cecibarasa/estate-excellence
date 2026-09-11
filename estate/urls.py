@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from excellence.views import login, logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/', login, name='login'),
+    path('accounts/logout/', logout, name='logout'),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', include('excellence.urls')),
 ]

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<div class="mandate-page">
+    <div class="mandate-shell">
+        <div class="mandate-statusbar">
+            <span class="status-pill"><i class="fa-solid fa-location-crosshairs"></i> Location refinement workspace</span>
+            <span>{{ estate.location_name }}</span>
+        </div>
+
+        <header class="mandate-header">
+            <div class="mandate-copy">
+                <h1>Refine Property Position</h1>
+                <p>
+                    Drag the map pin to the exact property position and save the updated coordinates.
+                    This keeps the public listing aligned with the real on-site location.
+                </p>
+            </div>
+
+            <aside class="mandate-summary">
+                <div class="summary-label">Property</div>
+                <div class="summary-row">
+                    <span>Estate &nbsp;</span>
+                    <span>{{ estate.name|default:'Property' }}</span>
+                </div>
+                <div class="summary-row muted">
+                    <span>Lat / Lng</span>
+                    <span>{{ estate.latitude|default:'-1.292100' }} / {{ estate.longitude|default:'36.821900' }}</span>
+                </div>
+            </aside>
+        </header>
+
+        <div class="mandate-form">
+            <div class="form-grid">
+                <div class="form-main">
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Map Lock &amp; Save</div>
+
+                        <div id="edit-map" class="edit-map-panel form-map-preview"></div>
+                        <div id="map-debug" class="map-debug-text"></div>
+
+                        <div class="form-actions">
+                            <a href="{% url 'estate_detail' estate.pk %}" class="secondary-action">Back</a>
+                            <button id="save-location" class="primary-action" type="button">Save location</button>
+                        </div>
+                        <div id="edit-status" class="edit-status"></div>
+                    </section>
+                </div>
+
+                <aside class="form-side">
+                    <div class="side-card">
+                        <div class="side-card-header">Property details</div>
+                        <div class="agent-row">
+                            <div class="avatar">{{ estate.name|first|default:'E' }}</div>
+                            <div>
+                                <strong>{{ estate.name }}</strong>
+                                <small>{{ estate.location_name }}</small>
+                            </div>
+                        </div>
+                        <div class="agent-contact">
+                            {% if estate.exact_address %}
+                                <div>{{ estate.exact_address }}</div>
+                            {% else %}
+                                <div>Location pending verification</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="side-card dark">
+                        <div class="side-card-header">Instructions</div>
+                        <ul class="benchmarks">
+                            <li>Drag the map pin to the exact property boundary.</li>
+                            <li>Use the map click to reposition the marker precisely.</li>
+                            <li>Save only once the location matches the property.</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "footer.html" %}
+<script>
+(function(){
+    function init() {
+        if (typeof L === 'undefined') { setTimeout(init,100); return; }
+
+        const latRaw = "{{ estate.latitude|default:'-1.2921'|floatformat:'6' }}";
+        const lngRaw = "{{ estate.longitude|default:'36.8219'|floatformat:'6' }}";
+        const lat = Number(latRaw) || -1.2921;
+        const lng = Number(lngRaw) || 36.8219;
+
+        const map = L.map('edit-map').setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+        const status = document.getElementById('edit-status');
+        const saveBtn = document.getElementById('save-location');
+        const debug = document.getElementById('map-debug');
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        saveBtn.addEventListener('click', function () {
+            const pos = marker.getLatLng();
+            status.textContent = 'Saving...';
+            const csrftoken = getCookie('csrftoken');
+            const body = new URLSearchParams();
+            body.append('latitude', pos.lat);
+            body.append('longitude', pos.lng);
+
+            fetch('{% url "update_location" estate.pk %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body.toString(),
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    status.textContent = 'Saved.';
+                    setTimeout(function () {
+                        window.location.href = '{% url "estate_detail" estate.pk %}';
+                    }, 700);
+                } else {
+                    status.textContent = 'Error: ' + (data.error || 'unknown');
+                }
+            })
+            .catch(err => {
+                status.textContent = 'Error saving';
+                console.error(err);
+            });
+        });
+
+        try {
+            debug.textContent = 'Marker at: ' + marker.getLatLng().lat.toFixed(6) + ', ' + marker.getLatLng().lng.toFixed(6);
+            marker.on('move', function () {
+                debug.textContent = 'Marker at: ' + marker.getLatLng().lat.toFixed(6) + ', ' + marker.getLatLng().lng.toFixed(6);
+            });
+            map.on('click', function (event) {
+                marker.setLatLng(event.latlng);
+            });
+            setTimeout(function () {
+                try { map.invalidateSize(); } catch (e) { console.warn('invalidateSize failed', e); }
+            }, 220);
+        } catch (e) {
+            if (debug) debug.textContent = 'Map init error: ' + e;
+            console.error('Map init error', e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+{% endblock %}

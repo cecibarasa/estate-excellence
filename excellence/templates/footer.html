@@ -1,12 +1,40 @@
 {% load static %}
+<footer class="footer">
+    <div class="row">
+        <div class="footer-brand">
+            <img src="{% static 'images/estate-excellence-logo.png' %}" alt="Estate Excellence Logo">
+            <p>Curating the world's most exceptional architectural achievements for the discerning collector.</p>
+        </div>
 
-{% block content %}
+        <div class="footer-column">
+            <h4>Portfolio</h4>
+            <ul>
+                {% for estate in estates|slice:':3' %}
+                <li><a href="#">{{ estate.display_location }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
 
-<div class="row footer">
-    <div class="col-md-6">
-        <img src="{% static "/images/estate-excellence-logo.png" %}"/>
-        <p>Curating the world's most exceptional <br> architectual achievements for the discerning <br> collector.</p>
+        <div class="footer-column">
+            <h4>Inquiries</h4>
+            <ul>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">The Hamptons</a></li>
+                <li><a href="#">Press</a></li>
+                <li><a href="#">Careers</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h4>Follow</h4>
+            <ul>
+                <li><a href="#">Instagram</a></li>
+                <li><a href="#">LinkedIn</a></li>
+                <li><a href="#">X</a></li>
+                <li><a href="#">Pinterest</a></li>
+            </ul>
+        </div>
     </div>
-</div>
 
-{% endblock %}
+    <div class="copyright">© 2026 Estate Excellence. All Rights Reserved.</div>
+</footer>

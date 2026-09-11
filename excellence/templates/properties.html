@@ -1,142 +1,144 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
+
 
 {% block content %}
-
-<div class="container">
-    <div class="properties-hero">
-        <h3> curated portfolios</h3>
-        <h1>Discover Architectural <br> Masterpieces</h1>
-        <div class="row">
-            <div class="col-md-8">
-                <p>Discover an unparalleled selection of architectural masterpieces, <br>from Brutalist cliffside retreats to neo-classical urban estates.</p>
+<section class="properties-page">
+    <div class="properties-shell">
+        <div class="properties-hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Curated Portfolios</p>
+                <h1>Our Exclusive<br>Collection</h1>
+                <p class="subtitle">Discover an unparalleled selection of architectural masterpieces, from Brutalist cliffside retreats to neo-classical urban estates.</p>
             </div>
-            <div class="col-md-2">
-                <span>142+<br></span>
-                <p>Active Listings</p>
-            </div>
-            <div class="col-md-2">
-                <span>$142B<br></span>
-                <p>Market Value</p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span>142+</span>
+                    <small>Active Listings</small>
+                </div>
+                <div class="stat">
+                    <span>$1.2B</span>
+                    <small>Market Value</small>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="properties-grid">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="filter">
-                    <div class="row">
-                        <h4> Refine Search</h4>
-                        <h5> Price range (USD)
-                        <form>
-                            <div class="row price">
-                                <div class="col-md-2 min">
-                                    <input type="number" placeholder="Min">
-                                </div>
-                                <div class="col-md-2 max">
-                                    <input type="number" placeholder="Max">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <h3>Accomodations</h3>
-                                <div class="col-md-2">
-                                    <input type="checkbox" id="bedrooms" name="bedrooms" value="bedrooms">
-                                    <label for="bedrooms">Bedrooms</label><br>
-                                </div> 
-                                <div class="col-md-2">
-                                    <input type="checkbox" id="bathrooms" name="bathrooms" value="bathrooms">
-                                    <label for="bathrooms">Bathrooms</label><br>
-                                </div>
-                            </div>
-                            {% comment %} <div class="row">
-                                <h3>Property Type</h3>
-                                <div class="col-md-2">
-                                    <input type="checkbox" id="villa" name="villa" value="villa">
-                                    <label for="villa">Villa</label><br>
-                                </div> 
-                                <div class="col-md-2">
-                                    <input type="checkbox" id="apartment" name="apartment" value="apartment">
-                                    <label for="apartment">Apartment</label><br>
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="checkbox" id="townhouse" name="townhouse" value="townhouse">
-                                    <label for="townhouse">Townhouse</label><br>
-                                </div>
-                            </div> {% endcomment %}
-                            <div class="row">
-                                <h3>Distiguished amenities</h3>
-                                <input type="checkbox" id="pool" name="pool" value="pool">
-                                <label for="pool">Pool</label><br>
-                                <input type="checkbox" id="spa" name="spa" value="spa">
-                                <label for="spa">Spa</label><br>
-                                <input type="checkbox" id="gym" name="gym" value="gym">
-                                <label for="gym">Gym</label><br>
-                                <input type="checkbox" id="garden" name="garden" value="garden">
-                                <label for="garden">Garden</label><br>
-                            </div>
-                            <a href="#" class="btn" type="button">Apply Filters</a>
-                        </form>
+
+        <div class="listing-layout">
+            <aside class="filter-panel">
+                <h4>Refine Search</h4>
+                <div class="filter-section">
+                    <h5>Price range (KSH)</h5>
+                    <div class="price-inputs">
+                        <input type="number" placeholder="Min">
+                        <input type="number" placeholder="Max">
                     </div>
                 </div>
-            </div>
-            {% for estate in estates %}
-            <div class="col-md-4">
-                <div class="property-card">
-                    <img src="{% static 'images/property1.jpg' %}" alt="{{ estate.name }}">
-                    <h3>{{ estate.name }} <span class="price">&nbsp;</span></h3>
-                    <h4>{{ estate.location_name }}</h4>
-                    <hr>
-                    <div class="flex gap-5">
-                        <span class="icon"><i class="fas fa-bed"></i> 4 </span>
-                        <span class="icon"><i class="fas fa-shower"></i> 3 </span>
-                        <span class="icon"><i class="fas fa-ruler-combined"></i> 3500</span>
-                        <a class="icon" href="{% url 'estate_detail' estate.pk %}"><i class="fas fa-arrow-right"></i></a>
-                    </div>
+
+                <div class="filter-section">
+                    <h5>Accommodations</h5>
+                    <label><input type="checkbox"> 3+</label>
+                    <label><input type="checkbox"> 4+</label>
+                    <label><input type="checkbox"> 5+</label>
                 </div>
+
+                <div class="filter-section">
+                    <h5>Distinguished amenities</h5>
+                    <label><input type="checkbox"> Pool</label>
+                    <label><input type="checkbox"> Spa</label>
+                    <label><input type="checkbox"> Gym</label>
+                    <label><input type="checkbox"> Garden</label>
+                </div>
+
+                <button class="filter-btn primary">Apply Filters</button>
+                <a href="{% url 'upload_property' %}" class="filter-btn secondary">Add Property</a>
+            </aside>
+
+            <div class="cards-wrap">
+                {% for estate in page_obj %}
+                    <article class="property-card">
+                        <div class="card-image" style="background-image: url('{% if estate.image %}{{ estate.image.url }}{% else %}https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=900&q=80{% endif %}');">
+                            <span class="status-badge">New Listing</span>
+                            <span class="favorite-badge"><i class="fas fa-heart"></i></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-header">
+                                <h3>{{ estate.name }}</h3>
+                                <span class="price">Ksh &nbsp;{{ estate.price|intcomma }}</span>
+                            </div>
+                            {% if estate.display_location %}<p class="location">{{ estate.display_location }}</p>{% endif %}
+                            <div class="meta-row">
+                                <span><i class="fas fa-bed"></i> {{ estate.bedrooms|default:'6' }}</span>
+                                <span><i class="fas fa-bath"></i> {{ estate.bathrooms|default:'8' }}</span>
+                                <span><i class="fas fa-ruler-combined"></i> {{ estate.total_built_area|default:'12,400' }} sq ft</span>
+                                <a href="{% url 'estate_detail' estate.pk %}" aria-label="View estate"><i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-card">
+                        <p>No estates found.</p>
+                        <a href="{% url 'upload_property' %}" class="filter-btn secondary">Upload Property</a>
+                    </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="col-12">
-                <p>No estates found.</p>
-            </div>
+        </div>
+
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">‹</a>
+            {% else %}
+                <span class="page-btn disabled">‹</span>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <span class="page-btn active">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}" class="page-btn">{{ num }}</a>
+                {% endif %}
             {% endfor %}
-            </div>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-btn">›</a>
+            {% else %}
+                <span class="page-btn disabled">›</span>
+            {% endif %}
         </div>
-    </div>
-    <div class="location">
-        <div class="row">
-            <div class="col-md-6">
-                <h1>Explore Destinations.</h1>
-                <p>Our properties are strategically located in the world's most <br> coveted zip codes. From the quiet majesty of the Swiss Alps to <br> the vibrant pulse of Tokyo's Minato City.</p>
-                <div class="row">
-                    <div class="col-md-2">
-                        <span>24<br></span>
-                        <p>Global Region.</p>
+
+        <section class="destinations">
+            <div class="destinations-copy">
+                <h2>Explore Destinations</h2>
+                <p>Our properties are strategically located in the world's most coveted zip codes. From the quiet majesty of the Swiss Alps to the vibrant pulse of Tokyo's Minato City.</p>
+                <div class="destination-metrics">
+                    <div>
+                        <strong>24</strong>
+                        <span>Global Regions</span>
                     </div>
-                    <div class="col-md-2">
-                        <span>1500+<br></span>
-                        <p>Trusted Partners.</p>
+                    <div>
+                        <strong>1500+</strong>
+                        <span>Trusted Partners</span>
                     </div>
                 </div>
-                <a href="#">View Interctive Map <i class="fas fa-arrow-right-long"></i></a>
+                <a href="#" class="map-link">View Interactive Map <i class="fas fa-arrow-right-long"></i></a>
             </div>
-            <div class="col-md-4">
-                <img src="{% static "/images/map.png" %}">
+            <div class="map-panel">
+                <div class="map-surface">
+                    <div class="map-grid"></div>
+                    <div class="map-badge">Upper East Side</div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="transend">
-        <h1>Ready to transform the <br> ordinary?</h1>
-        <p>Our private advisors are standing by to guide you through the most exclusive, off-market <br> opportunities</p>
-        <div class="row">
-            <div class="col-md-3">
-                <button class="btn"><a href="#">schedule consultation</a></button>
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn1"><a href="#">inquire privacy policy</a></button>
-            </div>
-        </div>
-    </div>
-    {% include "footer.html" %}
-</div>
+        </section>
 
+        <section class="final-cta">
+            <h2>Ready to transcend the<br>ordinary?</h2>
+            <p>Our private advisors are standing by to guide you through the most exclusive, off-market opportunities.</p>
+            <div class="cta-actions">
+                <button class="cta-btn dark">Schedule Consultation</button>
+                <button class="cta-btn light">Inquire Privacy Policy</button>
+            </div>
+        </section>
+    </div>
+</section>
+{% comment %} {% include "footer.html" %} {% endcomment %}
 {% endblock %}

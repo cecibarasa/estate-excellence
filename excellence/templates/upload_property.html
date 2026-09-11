@@ -1,13 +1,419 @@
 {% extends "base.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="mandate-page">
+    <div class="mandate-shell">
+        <div class="mandate-statusbar">
+            <span class="status-pill"><i class="fa-solid fa-circle-dot"></i> Exclusive listing mandate intake</span>
+            <span>Kenya portfolio</span>
+        </div>
 
+        <header class="mandate-header">
+            <div class="mandate-copy">
+                <h1>Submit an Architectural Mandate</h1>
+                <p>
+                    Curate your exclusive property representation for Kenya’s foremost prime enclaves.
+                    Submissions undergo vetting by our private advisory desk at IC Westlands, Nairobi,
+                    within 24 hours.
+                </p>
+            </div>
+
+            <aside class="mandate-summary">
+                <div class="summary-label">Portfolio tier</div>
+                <div class="summary-row">
+                    <span>Prime</span>
+                    <span>3x</span>
+                </div>
+                <div class="summary-row muted">
+                    <span>Review</span>
+                    <span>24 hrs</span>
+                </div>
+            </aside>
+        </header>
+
+        <div class="mandate-progress">
+            <div class="progress-step active"><span>01</span> Mandate &amp; Classification</div>
+            <div class="progress-step"><span>02</span> Valuation &amp; Land Rights</div>
+            <div class="progress-step"><span>03</span> Architectural Specs</div>
+            <div class="progress-step"><span>04</span> Media &amp; Verification</div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" autocomplete="off" class="mandate-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <div class="form-main">
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment 01</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Mandate &amp; Property Classification</div>
+
+                        <div class="field-grid two-up">
+                            <div class="field-wrap">
+                                <label>Property Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="field-wrap">
+                                <label>Region / Neighbourhood</label>
+                                {{ form.location_name }}
+                            </div>
+                        </div>
+
+                        <div class="selection-row">
+                            <div class="selection-item selected">
+                                <span class="selection-status">Direct Private</span>
+                                <strong>Executive Sale</strong>
+                            </div>
+                            <div class="selection-item">
+                                <span class="selection-status">Co-brokerage</span>
+                                <strong>Joint Mandate</strong>
+                            </div>
+                            <div class="selection-item">
+                                <span class="selection-status">Preferred partner</span>
+                                <strong>Global Network</strong>
+                            </div>
+                        </div>
+
+                        <div class="field-wrap full">
+                            <label>Exact Detailed Address Search</label>
+                            <div class="address-field-wrap">
+                                {{ form.exact_address }}
+                                <div id="search-results-dropdown" class="search-results-dropdown"></div>
+                            </div>
+                        </div>
+
+                        <div class="field-wrap full">
+                            <label>Property Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="field-wrap full">
+                            <label>Property Image</label>
+                            {{ form.image }}
+                        </div>
+
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+                    </section>
+
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment 02</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Financial Valuation &amp; Land Tenure</div>
+
+                        <div class="field-grid three-up small-labels">
+                            <div class="field-wrap">
+                                <label>Current Unit</label>
+                                <input type="text" value="Kenya Shillings (KES)" />
+                            </div>
+                            <div class="field-wrap">
+                                <label>Mandate reserve / asking price</label>
+                                <input type="text" value="KES 385,000,000" />
+                            </div>
+                            <div class="field-wrap">
+                                <label>Property type</label>
+                                <input type="text" value="Residential" />
+                            </div>
+                        </div>
+
+                        <div class="field-grid three-up small-labels mt-16">
+                            <div class="field-wrap">
+                                <label>Service charge / yearly levy</label>
+                                <input type="text" value="KES 45,000 / month" />
+                            </div>
+                            <div class="field-wrap">
+                                <label>Land title status</label>
+                                <input type="text" value="Freehold / Registry clear" />
+                            </div>
+                            <div class="field-wrap">
+                                <label>Occupancy</label>
+                                <input type="text" value="Vacant / ready to market" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment 03</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Spatial Dimensions &amp; Amenity Matrix</div>
+
+                        <div class="field-grid four-up small-labels mt-16">
+                            <div class="field-wrap">
+                                <label>Bedrooms</label>
+                                {{ form.bedrooms }}
+                            </div>
+                            <div class="field-wrap">
+                                <label>Bathrooms</label>
+                                {{ form.bathrooms }}
+                            </div>
+                            <div class="field-wrap">
+                                <label>Total Built Area</label>
+                                {{ form.total_built_area }}
+                            </div>
+                            <div class="field-wrap">
+                                <label>Plot Size</label>
+                                {{ form.plot_size }}
+                            </div>
+                        </div>
+
+                        <div class="chip-list">
+                            <button type="button" class="chip chip-option" data-value="Private pool">Private pool</button>
+                            <button type="button" class="chip chip-option" data-value="Home office">Home office</button>
+                            <button type="button" class="chip chip-option" data-value="Staff quarters">Staff quarters</button>
+                            <button type="button" class="chip chip-option" data-value="Garden terrace">Garden terrace</button>
+                            <button type="button" class="chip chip-option" data-value="Smart security">Smart security</button>
+                            <button type="button" class="chip chip-option" data-value="Gym annex">Gym annex</button>
+                            <button type="button" class="chip chip-option" data-value="Private cinema">Private cinema</button>
+                            <button type="button" class="chip chip-option" data-value="EV charging">EV charging</button>
+                        </div>
+                        {{ form.amenities }}
+                    </section>
+
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment 04</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Media Curation &amp; Matterport Assets</div>
+
+                        <div class="upload-box">
+                            <div class="upload-content">
+                                <div class="upload-icon"><i class="fa-solid fa-image"></i></div>
+                                <div>
+                                    <strong>Curate Master Media Package</strong>
+                                    <p>Drag &amp; drop 4K photography, drone footage, and video walk-throughs for a complete luxury presentation.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="upload-btn">Select Files From Drive</button>
+                        </div>
+
+                        <div class="media-grid">
+                            <div class="media-tile">
+                                <span>Pool &amp; terrace</span>
+                            </div>
+                            <div class="media-tile">
+                                <span>Living room</span>
+                            </div>
+                            <div class="media-tile">
+                                <span>Primary suite</span>
+                            </div>
+                            <div class="media-tile">
+                                <span>External views</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="form-block">
+                        <div class="block-header">
+                            <span class="block-index">Portfolio Segment 05</span>
+                            <span class="mini-toggle">
+                                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                            </span>
+                        </div>
+
+                        <div class="block-title">Estate Agents Board &amp; Legal Warranty</div>
+
+                        <div class="legal-grid">
+                            <div class="legal-item">
+                                <label>Agent reference ID</label>
+                                <input type="text" value="EAR/2024/0624-NBI" />
+                            </div>
+                            <div class="legal-item">
+                                <label>Signed exclusive mandate instrument</label>
+                                <input type="text" value="Exclusive Mandate, Capex 53, 2024" />
+                            </div>
+                        </div>
+
+                        <div class="legal-terms">
+                            <label class="check-row">
+                                <input type="checkbox" checked />
+                                <span>I confirm the property details are accurate and the mandate is submitted for exclusive representation.</span>
+                            </label>
+                            <label class="check-row">
+                                <input type="checkbox" checked />
+                                <span>I acknowledge the property is being represented under the Estate Excellence legal framework and marketing policy.</span>
+                            </label>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="form-side">
+                    <div class="side-card">
+                        <div class="side-card-header">Assigned desk director</div>
+                        <div class="agent-row">
+                            <div class="avatar">JV</div>
+                            <div>
+                                <strong>Julian Vance</strong>
+                                <small>Principal, Kenya Prime</small>
+                            </div>
+                        </div>
+                        <div class="agent-contact">
+                            <div>+254 711 907 845</div>
+                            <div>julian@estateexcellence.co</div>
+                        </div>
+                    </div>
+
+                    <div class="side-card dark">
+                        <div class="side-card-header">Vetting benchmarks</div>
+                        <ul class="benchmarks">
+                            <li>Excellence inclusion standards</li>
+                            <li>Reserve threshold</li>
+                            <li>Title integrity review</li>
+                            <li>Architectural quality review</li>
+                        </ul>
+                    </div>
+
+                    <div class="side-card">
+                        <div class="side-card-header">Property map</div>
+                        <div id="form-map-preview" class="form-map-preview"></div>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="secondary-action">Save Draft</button>
+                <button type="submit" class="primary-action">Submit Mandate</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include "footer.html" %}
+
+<script>
+    function initFormMap() {
+        if (typeof L === 'undefined') { setTimeout(initFormMap, 100); return; }
+
+        const defaultLat = -1.2921;
+        const defaultLng = 36.8219;
+
+        const latField = document.getElementById('property-lat');
+        const lngField = document.getElementById('property-lng');
+        let lat = parseFloat(latField && latField.value) || defaultLat;
+        let lng = parseFloat(lngField && lngField.value) || defaultLng;
+
+        const map = L.map('form-map-preview').setView([lat, lng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+        function updateHiddenFields(newLat, newLng) {
+            if (latField) latField.value = Number(newLat).toFixed(6);
+            if (lngField) lngField.value = Number(newLng).toFixed(6);
+        }
+
+        marker.on('dragend', function() {
+            const pos = marker.getLatLng();
+            updateHiddenFields(pos.lat, pos.lng);
+        });
+
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateHiddenFields(e.latlng.lat, e.latlng.lng);
+        });
+
+        const addressInput = document.getElementById('autocomplete-address');
+        const dropdown = document.getElementById('search-results-dropdown');
+
+        if (!addressInput) return;
+
+        let activeRequest = null;
+        addressInput.addEventListener('input', function() {
+            const q = this.value.trim();
+            if (q.length < 3) { dropdown.style.display = 'none'; return; }
+
+            if (activeRequest && typeof activeRequest.abort === 'function') activeRequest.abort();
+            const controller = new AbortController();
+            activeRequest = controller;
+
+            const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(q)}`;
+            fetch(url, { signal: controller.signal, headers: { 'Accept-Language': 'en' } })
+                .then(r => r.json())
+                .then(results => {
+                    dropdown.innerHTML = '';
+                    if (!results || results.length === 0) { dropdown.style.display = 'none'; return; }
+
+                    results.forEach(res => {
+                        const item = document.createElement('div');
+                        item.className = 'result-item';
+                        item.textContent = res.display_name;
+                        item.addEventListener('click', function() {
+                            addressInput.value = res.display_name;
+                            dropdown.style.display = 'none';
+                            const lat = parseFloat(res.lat);
+                            const lon = parseFloat(res.lon);
+                            marker.setLatLng([lat, lon]);
+                            map.setView([lat, lon], 16);
+                            updateHiddenFields(lat, lon);
+                        });
+                        dropdown.appendChild(item);
+                    });
+                    dropdown.style.display = 'block';
+                })
+                .catch(err => {
+                    if (err.name === 'AbortError') return;
+                    dropdown.style.display = 'none';
+                });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== addressInput) dropdown.style.display = 'none';
+        });
+    }
+
+    const amenityInput = document.getElementById('selected-amenities');
+    const amenityButtons = document.querySelectorAll('.chip-option');
+
+    if (amenityInput && amenityButtons.length) {
+        const selected = amenityInput.value ? amenityInput.value.split('|').filter(Boolean) : [];
+
+        amenityButtons.forEach(button => {
+            const value = button.dataset.value;
+            if (selected.includes(value)) {
+                button.classList.add('selected');
+            }
+
+            button.addEventListener('click', () => {
+                const values = (amenityInput.value ? amenityInput.value.split('|').filter(Boolean) : []);
+                const index = values.indexOf(value);
+
+                if (index >= 0) {
+                    values.splice(index, 1);
+                    button.classList.remove('selected');
+                } else {
+                    values.push(value);
+                    button.classList.add('selected');
+                }
+
+                amenityInput.value = values.join('|');
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initFormMap);
+</script>
 {% endblock %}

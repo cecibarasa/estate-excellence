@@ -6,7 +6,18 @@
         <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'about-us' %}">About Us</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'properties' %}">Properties</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'contact-us' %}">Contact Us</a></li>
-        <li class="nav-item property"><a class="nav-link" href="#">List Your Property</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+        <li class="nav-item property"><a class="nav-link" href="{% url 'upload_property' %}">List Your Property</a></li>
+        {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="#">Hi, {{ user.username }}</a></li>
+            <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link logout-button">Logout</button>
+                </form>
+            </li>
+        {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+        {% endif %}
     </ul>
 </nav>

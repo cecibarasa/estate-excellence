@@ -1,8 +1,357 @@
 {% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
 {% block content %}
-<div class="container">
-  <h1>{{ estate.name }}</h1>
-  <p><strong>Location:</strong> {{ estate.location_name }}</p>
-  <a href="{% url 'properties' %}">Back to listings</a>
+<div class="property-page-shell">
+    <section class="hero-banner" style="background-image: linear-gradient(180deg, rgba(10, 14, 20, 0.22), rgba(10, 14, 20, 0.68)), url('{% if estate.image %}{{ estate.image.url }}{% else %}/static/images/property2.jpg{% endif %}');">
+        <div class="hero-content-wrap">
+            <div class="hero-labels">
+                <span class="hero-badge">FEATURED LISTING</span>
+                <span class="hero-status">ACTIVE</span>
+            </div>
+            <h1 class="hero-title">{{ estate.name }}</h1>
+            {% comment %} <p class="hero-subtitle">{{ estate.display_location }}</p> {% endcomment %}
+            {% if estate.exact_address %}
+            <p class="hero-address" style="margin-top:6px; color:#e9eef2; font-size:0.95rem;">{{ estate.exact_address }}</p>
+            {% endif %}
+            <div class="hero-price-row">
+                <div class="price-block">
+                    <span class="mini-label">PRICE</span>
+                    <span class="money">Ksh &nbsp;{{ estate.price|floatformat:0 }} </span>
+                </div>
+                <div class="price-block">
+                    <span class="mini-label">SIZE</span>
+                    <span class="money">Ksh &nbsp;{{ estate.total_built_area|floatformat:0 }} sq ft</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-carousel-controls">
+            <button class="carousel-btn" aria-label="Previous">‹</button>
+            <button class="carousel-btn" aria-label="Next">›</button>
+        </div>
+
+        <div class="hero-action-bar">
+            <button class="pill"><i class="fas fa-share-alt"></i><span>Share</span></button>
+            <button class="pill"><i class="fas fa-heart"></i><span>Save</span></button>
+            <button class="pill"><i class="fas fa-file-alt"></i><span>Brochure</span></button>
+        </div>
+    </section>
+
+    <main class="page-content">
+        <div class="detail-grid">
+            <section class="intro-copy">
+                <div class="section-header">
+                    <span class="section-index">01</span>
+                    <h2>The Residence</h2>
+                </div>
+                <p>
+                    {{ estate.description|default:"This exquisite property is a testament to architectural brilliance, offering unparalleled luxury and comfort. Nestled in a prime location, it boasts breathtaking views, state-of-the-art amenities, and meticulous attention to detail throughout." }}
+                </p>
+            </section>
+
+            <aside class="summary-panel">
+                <div class="summary-row">
+                    <span>Bedrooms</span>
+                    <strong>{{ estate.bedrooms }}</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Bathrooms</span>
+                    <strong>{{ estate.bathrooms }}</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Year Built</span>
+                    <strong>{{ estate.year.year }}</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Garage</span>
+                    <strong>{{ estate.garage }}</strong>
+                </div>
+            </aside>
+
+            <aside class="inquiry-card">
+                <div class="inquiry-head">
+                    <h3>Inquire with Julian</h3>
+                </div>
+                <form>
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Your Name" />
+                    <label>Email Address</label>
+                    <input type="email" placeholder="email@luxury.com" />
+                    <label>Preferred Date</label>
+                    <input type="date" />
+                    <button type="submit">SCHEDULE PRIVATE VIEWING</button>
+                </form>
+                <p>By submitting, you agree to our terms of use and privacy policy.</p>
+            </aside>
+        </div>
+
+        <section class="feature-block">
+            <div class="section-header section-header-alt">
+                <span class="section-index">02</span>
+                <h2>Key Features</h2>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-item">
+
+                    <div class="feature-icon"><i class="fas fa-house"></i></div>
+                    <h4>Infinity Pool</h4>
+                    <p>Sunken lounge with panoramic sea view and pool deck.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-bed"></i></div>
+                    <h4>Private Cinema</h4>
+                    <p>Sound-insulated movie room with handcrafted oak finishes.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-shower"></i></div>
+                    <h4>Wellness Suite</h4>
+                    <p>Private spa, sauna, steam room, and treatment lounge.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-car-side"></i></div>
+                    <h4>Eco-conscious</h4>
+                    <p>Solar integration, heat recovery, and smart-home automation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="floorplan-block">
+            <div class="section-header section-header-alt">
+                <span class="section-index">03</span>
+                <h2>Floor Plans</h2>
+            </div>
+            <div class="plan-wrap">
+                <img src="/static/images/floorplan-placeholder.jpg" alt="Floor plan" />
+            </div>
+        </section>
+
+        <section class="neighborhood-block">
+            <div class="section-header section-header-alt">
+                <span class="section-index">04</span>
+                <h2>Neighborhood</h2>
+            </div>
+            <div class="neighborhood-grid">
+                <div class="neighborhood-copy">
+                    <h3>Casta Smeralda</h3>
+                    <p>
+                        The ultimate playground for the global elite. Known for its landscape gardens and
+                        graceful coves, Costa Smeralda offers a rare blend of privacy, luxury and effortless island living.
+                    </p>
+                    <ul>
+                        <li><span>Porto Cervo Marina</span><strong>12 min drive</strong></li>
+                        <li><span>Olbia Airport</span><strong>35 min drive</strong></li>
+                        <li><span>Private Beach Access</span><strong>1 min walk</strong></li>
+                    </ul>
+                    <button><a href="{% url "edit_estate" estate.pk %}">Edit Neighborhood</a></button>
+                </div>
+                <div class="map-box">
+                    <div id="propertyMap" style="height: 260px; width: 100%;"></div>
+                    {% if request.user.is_staff %}
+                    <div id="edit-location-controls" style="margin-top:8px;">
+                        <button id="edit-location-btn" class="btn btn-sm btn-secondary">Edit location</button>
+                        <button id="save-location-btn" class="btn btn-sm btn-primary" style="display:none; margin-left:6px;">Save location</button>
+                        <button id="cancel-location-btn" class="btn btn-sm btn-light" style="display:none; margin-left:6px;">Cancel</button>
+                        <span id="location-status" style="margin-left:10px; color:#666;"></span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="similar-block">
+            <div class="similar-header">
+                <div>
+                    <span class="eyebrow">DISCOVERY</span>
+                    <h2>Similar Collections</h2>
+                </div>
+                <a href="{% url 'properties' %}">VIEW ALL PROPERTIES</a>
+            </div>
+            {% comment %} {% if estate %} {% endcomment %}
+            <div class="similar-grid">
+            {% for similar in estates|slice:':3' %}
+                <article class="similar-card">
+                    <img src="{{ similar.image.url }}" alt="{{ similar.name }}" />
+                    <div class="similar-card-copy">
+                        <h3>{{ similar.name }}</h3>
+                        <p>{{ similar.display_location }}</p>
+                        <strong>{{ similar.price }}</strong>
+                    </div>
+                </article>
+            {% empty %}
+            </div>
+            <div class="col-12">
+                <p>No estates found.</p>
+                <button class="btn"><a href="{% url "properties" %}">View Properties</a></button>
+            </div>
+            {% comment %} {% endif %} {% endcomment %}
+            {% endfor %}
+            </div>
+        </section>
+    </main>
 </div>
+{% include "footer.html" %}
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    function initializeMapWhenReady() {
+        if (typeof L === 'undefined') {
+            // Leaflet not yet available, retry shortly
+            setTimeout(initializeMapWhenReady, 100);
+            return;
+        }
+
+        // Ensure consistent numeric rendering; floatformat provides a stable decimal string
+        const latRaw = "{{ estate.latitude|default:'-1.2921'|floatformat:'6' }}";
+        const lngRaw = "{{ estate.longitude|default:'36.8219'|floatformat:'6' }}";
+        const lat = Number(latRaw);
+        const lng = Number(lngRaw);
+
+        console.log('Estate coords (raw):', latRaw, lngRaw);
+        console.log('Estate coords (parsed):', lat, lng);
+
+        const startLat = isFinite(lat) ? lat : -1.2921;
+        const startLng = isFinite(lng) ? lng : 36.8219;
+
+        const map = L.map('propertyMap').setView([startLat, startLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const marker = L.marker([startLat, startLng]).addTo(map);
+        var popupContent = "<b>{{ estate.name|escapejs }}</b>";
+        {% if estate.exact_address %}
+        popupContent += "<br>{{ estate.exact_address|escapejs }}";
+        {% endif %}
+        marker.bindPopup(popupContent);
+
+        // Show a permanent small tooltip with the exact address if available
+        {% if estate.exact_address %}
+        marker.bindTooltip("{{ estate.exact_address|escapejs }}", {permanent: true, direction: 'top', offset: [0, -8]}).openTooltip();
+        {% endif %}
+
+        // Center the map explicitly on the marker and open popup so address is visible
+        map.setView(marker.getLatLng(), 15);
+        marker.openPopup();
+
+        // Small delay to avoid grey tiles caused by container hidden/size changes
+        setTimeout(function(){ map.invalidateSize(); }, 300);
+
+        // -- Edit location controls (staff only) --
+        {% if request.user.is_staff %}
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const editBtn = document.getElementById('edit-location-btn');
+        const saveBtn = document.getElementById('save-location-btn');
+        const cancelBtn = document.getElementById('cancel-location-btn');
+        const status = document.getElementById('location-status');
+
+        let originalPos = marker.getLatLng();
+        let editing = false;
+
+        function enterEdit() {
+            editing = true;
+            marker.dragging && marker.dragging.enable && marker.dragging.enable();
+            marker.setOpacity(0.9);
+            editBtn.style.display = 'none';
+            saveBtn.style.display = '';
+            cancelBtn.style.display = '';
+            status.textContent = ' Drag the pin to the exact spot.';
+        }
+
+        function exitEdit() {
+            editing = false;
+            marker.dragging && marker.dragging.disable && marker.dragging.disable();
+            marker.setOpacity(1);
+            editBtn.style.display = '';
+            saveBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            status.textContent = '';
+        }
+
+        editBtn && editBtn.addEventListener('click', function() {
+            originalPos = marker.getLatLng();
+            enterEdit();
+        });
+
+        cancelBtn && cancelBtn.addEventListener('click', function() {
+            marker.setLatLng(originalPos);
+            map.setView(originalPos, 15);
+            exitEdit();
+        });
+
+        saveBtn && saveBtn.addEventListener('click', function() {
+            const pos = marker.getLatLng();
+            status.textContent = ' Saving...';
+
+            const csrftoken = getCookie('csrftoken');
+            const form = new URLSearchParams();
+            form.append('latitude', pos.lat);
+            form.append('longitude', pos.lng);
+
+            fetch('{% url "update_location" estate.pk %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: form.toString(),
+                credentials: 'same-origin'
+            }).then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    status.textContent = ' Saved.';
+                    const locationTitle = document.querySelector('.hero-subtitle');
+                    const heroAddress = document.querySelector('.hero-address');
+
+                    if (data.display_location && locationTitle) {
+                        locationTitle.textContent = data.display_location;
+                    }
+
+                    if (data.exact_address) {
+                        if (heroAddress) {
+                            heroAddress.textContent = data.exact_address;
+                        }
+                        marker.unbindTooltip();
+                        marker.bindTooltip(data.exact_address, {permanent: true, direction: 'top', offset: [0, -8]}).openTooltip();
+                    } else if (heroAddress) {
+                        heroAddress.textContent = '';
+                    }
+
+                    exitEdit();
+                } else {
+                    status.textContent = ' Error: ' + (data.error || 'unknown');
+                }
+            }).catch(err => {
+                status.textContent = ' Error saving location';
+                console.error(err);
+            });
+        });
+        {% endif %}
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeMapWhenReady);
+</script>
+
 {% endblock %}
