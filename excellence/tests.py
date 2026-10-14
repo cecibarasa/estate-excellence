@@ -128,3 +128,18 @@ class HomeSearchFilterTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['estates']), 1)
         self.assertEqual(response.context['estates'][0].location_name, 'Westlands')
+
+
+class GoogleDriveAuthTests(TestCase):
+    @patch('excellence.views.Flow.from_client_secrets_file')
+    @patch('excellence.views.os.path.exists', return_value=True)
+    def test_google_drive_login_redirects_to_authorization_url(self, mock_exists, mock_from_client_secrets):
+        mock_flow = MagicMock()
+        mock_flow.authorization_url.return_value = ('https://accounts.google.com/o/oauth2/auth', 'state-123')
+        mock_from_client_secrets.return_value = mock_flow
+
+        response = self.client.get(reverse('google_drive_login'))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.client.session['google_state'], 'state-123')
+        self.assertEqual(response.url, 'https://accounts.google.com/o/oauth2/auth')

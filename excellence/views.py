@@ -1,16 +1,34 @@
+from django.core.serializers import json
+from django.db.migrations import state
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from .models import *
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponse, HttpResponseBadRequest, request
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, get_user_model, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator
+from django.conf import settings
+from django.core.files.base import ContentFile
+import io
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+from google.oauth2.credentials import Credentials
+import json
+import os
+from google_auth_oauthlib.flow import Flow
+from unittest.mock import patch, MagicMock
+from rest_framework import serializers
+from .serializers import ImageSerializer
 
 
 # Create your views here.
+
+CLIENT_SECRETS_FILE = os.path.join(settings.BASE_DIR, 'client_secret.json')
+SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+REDIRECT_URI = "http://localhost:8000/google/callback/"
 
 def register(request):
     AuthUser = get_user_model()
@@ -79,7 +97,8 @@ def index(request):
 
 @login_required
 def about(request):
-    return render(request, 'about-us.html')
+    estates = Estate.objects.all()
+    return render(request, 'about-us.html', {'estates': estates})
 
 def properties(request):
     estates = Estate.objects.all().order_by('-id')
@@ -89,16 +108,167 @@ def properties(request):
 
     return render(request, 'properties.html', {'estates': page_obj.object_list, 'page_obj': page_obj, 'paginator': paginator,})
 
+
+def upload_image_from_drive(request, file_id, *args, **kwargs):
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        file_id = data.get("file_id")
+
+        return JsonResponse({
+
+        "success": True,
+
+        "file_id": file_id
+
+        })
+
+    return JsonResponse({
+    "error": "POST request required"
+    }, status=400)
+
+def google_drive_login(request):
+    if not os.path.exists(CLIENT_SECRETS_FILE):
+        return HttpResponse(
+            "Google OAuth client secret file is missing. Create client_secret.json from Google Cloud Console and place it at the project root.",
+            status=500,
+        )
+
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI,
+    )
+
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='consent',
+        code_challenge_method='S256',
+    )
+
+    request.session['google_state'] = state
+    request.session['google_code_verifier'] = flow.code_verifier
+    return redirect(authorization_url)
+
+
+def google_callback(request):
+    state = request.session.get('google_state')
+    code_verifier = request.session.get('google_code_verifier')
+    if not state:
+        return HttpResponseBadRequest('Missing Google OAuth state.')
+    if not code_verifier:
+        return HttpResponseBadRequest('Missing Google OAuth code verifier.')
+
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE,
+        scopes=SCOPES,
+        state=state,
+        redirect_uri=REDIRECT_URI,
+    )
+
+    flow.code_verifier = code_verifier
+    flow.fetch_token(authorization_response=request.build_absolute_uri())
+
+    credentials = flow.credentials
+    request.session['google_token'] = {
+        'token': credentials.token,
+        'refresh_token': credentials.refresh_token,
+        'token_uri': credentials.token_uri,
+        'client_id': credentials.client_id,
+        'client_secret': credentials.client_secret,
+        'scopes': credentials.scopes,
+    }
+    request.session.pop('google_code_verifier', None)
+
+    return redirect('upload_property')
+
+
+def get_google_credentials(request):
+    token_data = request.session.get('google_token')
+    if not token_data:
+        return None
+
+    return Credentials(
+        token=token_data.get('token'),
+        refresh_token=token_data.get('refresh_token'),
+        token_uri=token_data.get('token_uri'),
+        client_id=token_data.get('client_id'),
+        client_secret=token_data.get('client_secret'),
+        scopes=token_data.get('scopes') or SCOPES,
+    )
+
+
+def google_drive_import(request, file_id):
+    credentials = get_google_credentials(request)
+    if not credentials:
+        return redirect('google_drive_login')
+
+    service = build('drive', 'v3', credentials=credentials)
+    file_meta = service.files().get(fileId=file_id, fields='name,mimeType,webViewLink').execute()
+    request_obj = service.files().get_media(fileId=file_id)
+
+    fh = io.BytesIO()
+    downloader = MediaIoBaseDownload(fh, request_obj)
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+
+    filename = file_meta.get('name') or 'drive-import.jpg'
+    safe_name = os.path.basename(filename)
+    file_dir = os.path.join(settings.MEDIA_ROOT, 'google_drive_imports')
+    os.makedirs(file_dir, exist_ok=True)
+    media_path = os.path.join(file_dir, safe_name)
+    with open(media_path, 'wb') as f:
+        f.write(fh.getvalue())
+
+    request.session['drive_import_file'] = safe_name
+    request.session['drive_import_url'] = file_meta.get('webViewLink', '')
+    request.session['drive_import_media_url'] = f'/media/google_drive_imports/{safe_name}'
+
+    return redirect('upload_property')
+
+
 def upload_property(request):
+    drive_files = []
+    selected_drive_file = request.session.get('drive_import_file')
+    selected_drive_url = request.session.get('drive_import_url')
+
+    creds = get_google_credentials(request)
+    if creds:
+        try:
+            service = build('drive', 'v3', credentials=creds)
+            results = service.files().list(
+                pageSize=10,
+                fields='nextPageToken, files(id, name, mimeType, webViewLink)',
+                q="mimeType contains 'image/'"
+            ).execute()
+            drive_files = results.get('files', [])
+        except Exception:
+            drive_files = []
+
     if request.method == 'POST':
         form = EstateForm(request.POST, request.FILES)
         if form.is_valid():
             upload = form.save(commit=False)
+
+            if not upload.image and selected_drive_file:
+                upload.image = os.path.join('google_drive_imports', selected_drive_file)
+
             upload.save()
+            request.session.pop('drive_import_file', None)
+            request.session.pop('drive_import_url', None)
             return redirect('properties')
     else:
         form = EstateForm()
-    return render(request, 'upload_property.html', locals())
+    return render(request, 'upload_property.html', {
+        'form': form,
+        'drive_files': drive_files,
+        'selected_drive_file': selected_drive_file,
+        'selected_drive_url': selected_drive_url,
+        'selected_drive_media_urls': [request.session.get('drive_import_media_url')],
+    })
 
 def contact(request):
     return render(request, 'contact-us.html')
@@ -106,6 +276,10 @@ def contact(request):
 def estate_detail(request, pk):
     estate = get_object_or_404(Estate, pk=pk)
     estates = Estate.objects.all()
+    google_drive_imported_file = request.session.get('drive_import_file')
+    google_drive_imported_url = request.session.get('drive_import_url')
+    serializer = ImageSerializer(google_drive_imported_file, many=True)
+    google_drive_imports = Estate.objects.filter(google_drive_image__isnull=False)
     
     if request.method == 'POST':
         form = ContactForm(request.POST, request.FILES)
@@ -124,7 +298,12 @@ def estate_detail(request, pk):
     return render(request, 'estate_detail.html', {
         'estate': estate, 
         'form': form, # This is now safely defined for both GET and POST requests!
-        'estates': estates
+        'estates': estates,
+        'selected_drive_file': google_drive_imported_file,
+        'selected_drive_url': google_drive_imported_url,
+        'selected_drive_media_urls': [request.session.get('drive_import_media_url')] if google_drive_imported_file else [],
+        'serializer': serializer.data if google_drive_imported_file else None,
+        'google_drive_image': google_drive_imports,
     })
 
 

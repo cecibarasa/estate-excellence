@@ -90,7 +90,6 @@
         </div>
     </div>
 </div>
-{% include "footer.html" %}
 <script>
 (function(){
     function init() {
@@ -102,8 +101,10 @@
         const lng = Number(lngRaw) || 36.8219;
 
         const map = L.map('edit-map').setView([lat, lng], 16);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+        L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_3ki8_1_3a55aeee897ae335e1f5efc2', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
         }).addTo(map);
 
         const marker = L.marker([lat, lng], { draggable: true }).addTo(map);

@@ -16,6 +16,11 @@ urlpatterns = [
     path('registration/register/', register, name='register'),
     path('contact/', contact, name='contact'),
     path('profile/', profile, name='profile'),
+    path('upload-image/<str:file_id>/', upload_image_from_drive, name='upload_image_from_drive'),
+    path('google/login/', google_drive_login, name='google_drive_login'),
+    path('google/callback/', google_callback, name='google_callback'),
+    path('google/import/<str:file_id>/', google_drive_import, name='google_drive_import'),
+    
 
 ]
 

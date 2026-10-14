@@ -9,8 +9,8 @@
         <div class="footer-column">
             <h4>Portfolio</h4>
             <ul>
-                {% for estate in estates|slice:':3' %}
-                <li><a href="#">{{ estate.display_location }}</a></li>
+                {% for estate in estates|slice:':4' %}
+                <li><a href="{% url 'estate_detail' estate.pk %}">{{ estate.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>

@@ -206,9 +206,21 @@
                                     <p>Drag &amp; drop 4K photography, drone footage, and video walk-throughs for a complete luxury presentation.</p>
                                 </div>
                             </div>
-                            <button type="button" class="upload-btn">Select Files From Drive</button>
+                            <a class="upload-btn" href="{% url 'google_drive_login' %}">Select Files From Drive</a>
                         </div>
 
+                        {% if drive_files %}
+                        <div class="media-grid">
+                            {% for file in drive_files %}
+                            <div class="media-tile">
+                                <span>{{ file.name }}</span>
+                                <a href="{% url 'google_drive_import' file.id %}" target="_self" rel="noopener noreferrer">
+                                    Select this image
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
                         <div class="media-grid">
                             <div class="media-tile">
                                 <span>Pool &amp; terrace</span>
@@ -223,6 +235,21 @@
                                 <span>External views</span>
                             </div>
                         </div>
+                        {% endif %}
+
+                        {% if selected_drive_file %}
+                        <div class="media-tile selected-drive-file">
+                            <strong>Imported from Drive:</strong> {{ selected_drive_file }}
+                            {% if selected_drive_url %}
+                            <a href="{{ selected_drive_url }}" target="_blank">Open</a>
+                            {% endif %}
+                            <img src="{{ selected_drive_media_url.image.url }}" alt="Imported from Google Drive" style="max-width:100%; margin-top:12px; border-radius:8px;" />
+                        </div>
+                        {% else %}
+                        <div class="media-tile selected-drive-file">
+                            <strong>No file imported yet.</strong>
+                        </div>
+                        {% endif %}
                     </section>
 
                     <section class="form-block">
@@ -312,8 +339,10 @@
         let lng = parseFloat(lngField && lngField.value) || defaultLng;
 
         const map = L.map('form-map-preview').setView([lat, lng], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
         }).addTo(map);
 
         const marker = L.marker([lat, lng], { draggable: true }).addTo(map);

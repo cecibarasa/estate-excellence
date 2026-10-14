@@ -22,9 +22,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const map = L.map("adminPickerMap").setView([initialLat, initialLng], 13);
 
-    // FIX: Correct standard OpenStreetMap tile URL template
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+    // Use a public basemap provider that is not blocked by OSM tile policy.
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
     }).addTo(map);
 
     let marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(map);

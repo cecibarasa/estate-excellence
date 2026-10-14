@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="property-page-shell">
-    <section class="hero-banner" style="background-image: linear-gradient(180deg, rgba(10, 14, 20, 0.22), rgba(10, 14, 20, 0.68)), url('{% if estate.image %}{{ estate.image.url }}{% else %}/static/images/property2.jpg{% endif %}');">
+    <section class="hero-banner" style="background-image: linear-gradient(180deg, rgba(10, 14, 20, 0.22), rgba(10, 14, 20, 0.68)), url('{% if estate.image %}{{ estate.image.url }}{% elif estate.google_drive_image %}{{ estate.google_drive_image.url }}{% else %}/static/images/property2.jpg{% endif %}');">
         <div class="hero-content-wrap">
             <div class="hero-labels">
                 <span class="hero-badge">FEATURED LISTING</span>
@@ -27,7 +27,6 @@
                 </div>
             </div>
         </div>
-
         <div class="hero-carousel-controls">
             <button class="carousel-btn" aria-label="Previous">‹</button>
             <button class="carousel-btn" aria-label="Next">›</button>
@@ -124,7 +123,13 @@
                 <h2>Floor Plans</h2>
             </div>
             <div class="plan-wrap">
-                <img src="/static/images/floorplan-placeholder.jpg" alt="Floor plan" />
+                {% if estate.google_drive_image %}
+                    <img src="{{ estate.google_drive_image.url }}" alt="{{ estate.name }}" />
+                {% elif estate.image %}
+                    <img src="{{ estate.image.url }}" alt="{{ estate.name }}" />
+                {% else %}
+                    <img src="{% static 'images/property2.jpg' %}" alt="{{ estate.name }}" />
+                {% endif %}
             </div>
         </section>
 
@@ -219,10 +224,10 @@
         const startLng = isFinite(lng) ? lng : 36.8219;
 
         const map = L.map('propertyMap').setView([startLat, startLng], 15);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
         }).addTo(map);
 
         const marker = L.marker([startLat, startLng]).addTo(map);

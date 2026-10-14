@@ -41,6 +41,7 @@ class Estate(models.Model):
     )
     name = models.CharField(max_length=100, default='', blank=True)
     image = models.ImageField(upload_to='excellence/photos/', blank=True)
+    google_drive_image = models.ImageField(upload_to='excellence/google_drive_imports/', blank=True, null=True)
     description = models.TextField(max_length=500, blank=True)
     location_name = models.CharField(max_length=100, choices=LOCATIONS)
     bedrooms = models.PositiveIntegerField(default=0, blank=True)
