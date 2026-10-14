@@ -129,14 +129,14 @@ def upload_image_from_drive(request, file_id, *args, **kwargs):
     }, status=400)
 
 def google_drive_login(request):
-    if not os.path.exists(CLIENT_SECRETS_FILE):
+    if not os.path.exists(CLIENT_SECRET_FILE):
         return HttpResponse(
             "Google OAuth client secret file is missing. Create client_secret.json from Google Cloud Console and place it at the project root.",
             status=500,
         )
 
     flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE,
+        CLIENT_SECRET_FILE,
         scopes=SCOPES,
         redirect_uri=REDIRECT_URI,
     )
@@ -162,7 +162,7 @@ def google_callback(request):
         return HttpResponseBadRequest('Missing Google OAuth code verifier.')
 
     flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE,
+        CLIENT_SECRET_FILE,
         scopes=SCOPES,
         state=state,
         redirect_uri=REDIRECT_URI,
