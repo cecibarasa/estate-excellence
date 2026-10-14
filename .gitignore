@@ -115,7 +115,8 @@ venv.bak/
 
 # secret files
 client_secret.json
-clie
+client_secret*.json
+client_secret*.json:Zone.Identifier
 
 # Spyder project settings
 .spyderproject
