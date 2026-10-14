@@ -28,7 +28,6 @@ from .serializers import ImageSerializer
 
 CLIENT_SECRET_FILE = os.path.join(settings.BASE_DIR, 'client_secret.json')
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
-# REDIRECT_URI = "http://localhost:8000/google/callback/"
 REDIRECT_URI = "https://estate-excellence-1.onrender.com/accounts/google/login/callback/"
 
 def register(request):
