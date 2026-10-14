@@ -85,6 +85,10 @@ WSGI_APPLICATION = 'estate.wsgi.application'
 import os
 import dj_database_url
 
+REDIRECT_URI = os.environ.get(
+    "GOOGLE_REDIRECT_URI",
+    "http://localhost:8000/google/callback/"
+)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
