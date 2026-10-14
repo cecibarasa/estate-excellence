@@ -171,3 +171,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+CLIENT_SECRET_FILE = BASE_DIR / "client_secret.json"
