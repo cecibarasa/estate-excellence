@@ -118,6 +118,7 @@ client_secret.json
 client_secret*.json
 client_secret*.json:Zone.Identifier
 
+
 # Spyder project settings
 .spyderproject
 .spyproject

@@ -15,12 +15,6 @@ from pathlib import Path
 import dj_database_url
 
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default="postgresql://postgres:namaemba@localhost:5432/excellence",
-        conn_max_age=600,
-    )
-}
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,16 +82,45 @@ WSGI_APPLICATION = 'estate.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'excellence',
-        'USER': 'nabalayo',
-        'PASSWORD': 'namaemba',
-        'HOST': 'localhost',
-        'PORT': '5432',
+import os
+import dj_database_url
+
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is missing")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "excellence",
+            "USER": "nabalayo",
+            "PASSWORD": "namaemba",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'excellence',
+#         'USER': 'nabalayo',
+#         'PASSWORD': 'namaemba',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
