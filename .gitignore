@@ -113,6 +113,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# secret files
+client_secret.json
+clie
+
 # Spyder project settings
 .spyderproject
 .spyproject
