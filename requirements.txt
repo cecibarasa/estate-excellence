@@ -4,6 +4,7 @@ cffi==2.1.1
 charset-normalizer==3.5.1
 crispy-bootstrap5==2026.3
 cryptography==50.0.1
+dj-database-url==3.1.2
 Django==6.0.7
 django-crispy-forms==2.7
 django-rest-framework==0.1.0
@@ -16,7 +17,6 @@ google-auth==2.58.0
 google-auth-httplib2==0.4.2
 google-auth-oauthlib==1.4.1
 googleapis-common-protos==1.75.3
-gunicorn==20.1.0
 httplib2==0.32.0
 idna==3.19
 oauthlib==3.3.1
