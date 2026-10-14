@@ -31,6 +31,7 @@ pycparser==3.0
 pyparsing==3.3.2
 requests==2.34.2
 requests-oauthlib==2.0.0
+setuptools==81.0.0
 sqlparse==0.5.5
 typing_extensions==4.16.0
 uritemplate==4.2.0
